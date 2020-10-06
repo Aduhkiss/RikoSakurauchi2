@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import me.atticuszambrana.rikosaukurauchi.common.OperatingSystem;
 import me.atticuszambrana.rikosaukurauchi.config.ConfigFile;
+import me.atticuszambrana.rikosaukurauchi.core.CommandListener;
 import me.atticuszambrana.rikosaukurauchi.core.StabilizationCore;
 import me.atticuszambrana.rikosaukurauchi.util.OSFinder;
 
@@ -54,7 +55,7 @@ public class Main {
 		 */
 		
 		// (Debug message, remove before release - Atticus)
-		System.out.println("DATA INGESTED: " + con.toString());
+		//System.out.println("DATA INGESTED: " + con.toString());
 		
 		//TODO: Make sure that the data that the program ingested is correct JSON syntax, if not, complain to the user -Atticus
 		
@@ -62,7 +63,7 @@ public class Main {
 		
 		ConfigFile theConfig = gson.fromJson(con.toString(), ConfigFile.class);
 		// (Debug message, remove before release - Atticus)
-		System.out.println("FINAL: " + theConfig.getDiscordToken());
+		//System.out.println("FINAL: " + theConfig.getDiscordToken());
 		
 		//TODO: Add a webserver with several routes in order to pull data from the code
 		
@@ -73,5 +74,9 @@ public class Main {
 		StabilizationCore sCore = new StabilizationCore();
 		discord.addReconnectListener(sCore);
 		discord.addLostConnectionListener(sCore);
+		
+		// Start the Command Listener
+		CommandListener cListener = new CommandListener(theConfig);
+		discord.addMessageCreateListener(cListener);
 	}
 }

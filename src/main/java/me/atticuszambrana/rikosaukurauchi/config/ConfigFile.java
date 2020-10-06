@@ -9,15 +9,18 @@ public class ConfigFile {
 	
 	private String discordToken;
 	private String applicationId;
+	private String commandPrefix;
 	
 	private String sql_host;
 	private String sql_database;
 	private String sql_username;
 	private String sql_password;
 	
-	public ConfigFile(String discordToken, String applicationId, String sql_host, String sql_database, String sql_username, String sql_password) {
+	public ConfigFile(String discordToken, String applicationId, String commandPrefix, String sql_host, String sql_database, String sql_username, String sql_password) {
 		this.discordToken = discordToken;
 		this.applicationId = applicationId;
+		this.commandPrefix = commandPrefix;
+		
 		this.sql_host = sql_host;
 		this.sql_database = sql_database;
 		this.sql_username = sql_username;
@@ -30,6 +33,10 @@ public class ConfigFile {
 	
 	public String getAppId() {
 		return applicationId;
+	}
+	
+	public String getCommandPrefix() {
+		return commandPrefix;
 	}
 	
 	public String getSQLHost() {
