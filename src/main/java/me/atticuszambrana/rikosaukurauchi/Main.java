@@ -22,6 +22,8 @@ public class Main {
 	 * Created by Atticus Zambrana
 	 */
 	
+	private static DiscordApi discord;
+	
 	public static void main(String[] args) {
 		OperatingSystem os = OSFinder.getOS();
 		//System.out.println("[DEBUG] You are running on: " + os.toString());
@@ -68,7 +70,7 @@ public class Main {
 		//TODO: Add a webserver with several routes in order to pull data from the code
 		
 		// Finally, start the Discord bot
-		DiscordApi discord = new DiscordApiBuilder().setToken(theConfig.getDiscordToken()).login().join();
+		discord = new DiscordApiBuilder().setToken(theConfig.getDiscordToken()).login().join();
 		
 		// Add any and all modules that we want the bot to use
 		StabilizationCore sCore = new StabilizationCore();
@@ -78,5 +80,12 @@ public class Main {
 		// Start the Command Listener
 		CommandListener cListener = new CommandListener(theConfig);
 		discord.addMessageCreateListener(cListener);
+	}
+	
+	/*
+	 * Some parts of the bot need access to the discord api (ie Lavaplayer) so here it is!
+	 */
+	public static DiscordApi getDiscord() {
+		return discord;
 	}
 }

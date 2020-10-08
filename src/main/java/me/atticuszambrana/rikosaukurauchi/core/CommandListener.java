@@ -8,6 +8,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 import me.atticuszambrana.rikosaukurauchi.command.help.HelpCommand;
+import me.atticuszambrana.rikosaukurauchi.command.music.PlayCommand;
 import me.atticuszambrana.rikosaukurauchi.common.Command;
 import me.atticuszambrana.rikosaukurauchi.config.ConfigFile;
 import me.atticuszambrana.rikosaukurauchi.util.StringUtil;
@@ -22,7 +23,10 @@ public class CommandListener implements MessageCreateListener {
 		this.config = config;
 		// Register all commands here
 		
+		// Help Commands
 		register(new HelpCommand());
+		// Music Commands
+		register(new PlayCommand());
 	}
 	
 	public void register(Command cmd) {
@@ -32,8 +36,6 @@ public class CommandListener implements MessageCreateListener {
 	public void onMessageCreate(MessageCreateEvent event) {
 		String prefix = config.getCommandPrefix();
 		String message = event.getMessageContent();
-		
-		System.out.println(message);
 		
 		if(event.getMessageContent().startsWith(prefix)) {
 			for(Map.Entry<String, Command> ent : Commands.entrySet()) {
