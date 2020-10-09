@@ -1,12 +1,11 @@
 package me.atticuszambrana.rikosaukurauchi.lavaplayer;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.audio.AudioSource;
 import org.javacord.api.audio.AudioSourceBase;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-
-import me.atticuszambrana.rikosaukurauchi.Main;
 
 public class LavaplayerAudioSource extends AudioSourceBase {
 
@@ -19,8 +18,8 @@ public class LavaplayerAudioSource extends AudioSourceBase {
      * @param api A discord api instance.
      * @param audioPlayer An audio player from Lavaplayer.
      */
-    public LavaplayerAudioSource(AudioPlayer audioPlayer) {
-        super(Main.getDiscord());
+    public LavaplayerAudioSource(DiscordApi api, AudioPlayer audioPlayer) {
+        super(api);
         this.audioPlayer = audioPlayer;
     }
 
@@ -45,6 +44,6 @@ public class LavaplayerAudioSource extends AudioSourceBase {
 
     @Override
     public AudioSource copy() {
-        return new LavaplayerAudioSource(audioPlayer);
+        return new LavaplayerAudioSource(getApi(), audioPlayer);
     }
 }

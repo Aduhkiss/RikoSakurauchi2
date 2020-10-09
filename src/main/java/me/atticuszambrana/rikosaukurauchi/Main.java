@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.util.logging.ExceptionLogger;
 
 import com.google.gson.Gson;
 
@@ -22,7 +23,14 @@ public class Main {
 	 * Created by Atticus Zambrana
 	 */
 	
+	/**
+	 *    MAIN TODO LIST
+	 *    
+	 *    - Make our own unique logging system that logs to files, and displays timestamps
+	 */
+	
 	private static DiscordApi discord;
+	private static ConfigFile theConfig;
 	
 	public static void main(String[] args) {
 		OperatingSystem os = OSFinder.getOS();
@@ -63,14 +71,29 @@ public class Main {
 		
 		Gson gson = new Gson();
 		
-		ConfigFile theConfig = gson.fromJson(con.toString(), ConfigFile.class);
+		theConfig = gson.fromJson(con.toString(), ConfigFile.class);
 		// (Debug message, remove before release - Atticus)
 		//System.out.println("FINAL: " + theConfig.getDiscordToken());
 		
 		//TODO: Add a webserver with several routes in order to pull data from the code
 		
 		// Finally, start the Discord bot
-		discord = new DiscordApiBuilder().setToken(theConfig.getDiscordToken()).login().join();
+		//discord = new DiscordApiBuilder().setToken(theConfig.getDiscordToken()).login().join();
+		
+		new DiscordApiBuilder()
+		.setToken(theConfig.getDiscordToken())
+		.setWaitForServersOnStartup(false)
+		.setRecommendedTotalShards().join()
+		.loginAllShards()
+		.forEach(shardFuture -> shardFuture
+				.thenAccept(Main::onShardLogin)
+				.exceptionally(ExceptionLogger.get())
+				);
+	}
+	
+	private static void onShardLogin(DiscordApi discord) {
+		// Make the cache smaller, to reduce the memory usage on the physical machine
+		discord.setMessageCacheSize(10, 60*60);
 		
 		// Add any and all modules that we want the bot to use
 		StabilizationCore sCore = new StabilizationCore();
@@ -78,14 +101,8 @@ public class Main {
 		discord.addLostConnectionListener(sCore);
 		
 		// Start the Command Listener
-		CommandListener cListener = new CommandListener(theConfig);
+		CommandListener cListener = new CommandListener(theConfig, discord);
 		discord.addMessageCreateListener(cListener);
-	}
-	
-	/*
-	 * Some parts of the bot need access to the discord api (ie Lavaplayer) so here it is!
-	 */
-	public static DiscordApi getDiscord() {
-		return discord;
+		System.out.println("[SHARD " + discord.getCurrentShard() + "] Connected to Discord.");
 	}
 }

@@ -3,6 +3,7 @@ package me.atticuszambrana.rikosaukurauchi.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
@@ -18,15 +19,17 @@ public class CommandListener implements MessageCreateListener {
 	private Map<String, Command> Commands = new HashMap<>();
 	// The actual config file passed to us by the Main class
 	private ConfigFile config;
+	private DiscordApi discord;
 	
-	public CommandListener(ConfigFile config) {
+	public CommandListener(ConfigFile config, DiscordApi discord) {
 		this.config = config;
+		this.discord = discord;
 		// Register all commands here
 		
 		// Help Commands
 		register(new HelpCommand());
 		// Music Commands
-		register(new PlayCommand());
+		register(new PlayCommand(discord));
 	}
 	
 	public void register(Command cmd) {
@@ -35,7 +38,6 @@ public class CommandListener implements MessageCreateListener {
 
 	public void onMessageCreate(MessageCreateEvent event) {
 		String prefix = config.getCommandPrefix();
-		String message = event.getMessageContent();
 		
 		if(event.getMessageContent().startsWith(prefix)) {
 			for(Map.Entry<String, Command> ent : Commands.entrySet()) {
@@ -45,7 +47,7 @@ public class CommandListener implements MessageCreateListener {
 				if(event.getMessageContent().startsWith(prefix + name)) {
 					User author = event.getMessageAuthor().asUser().get();
 					cmd.execute(StringUtil.toArrayWithoutFirst(event.getMessageContent()), event);
-					System.out.println("[COMMAND] " + author.getDiscriminatedName() + " has run " + prefix + name);
+					System.out.println("[{SHARD " + event.getApi().getCurrentShard() + "} COMMAND] " + author.getDiscriminatedName() + " has run " + prefix + name);
 				}
 			}
 		}
