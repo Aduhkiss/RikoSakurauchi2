@@ -36,7 +36,7 @@ public class Main {
 		OperatingSystem os = OSFinder.getOS();
 		//System.out.println("[DEBUG] You are running on: " + os.toString());
 		
-		System.out.println("Starting Riko Sakurauchi 2 Discord bot.");
+		System.out.println("RIKO SAKURAUCHI REBORN");
 		System.out.println("This program has been brought to you by Atticus Zambrana (https://atticuszambrana.me)\n");
 		
 		// We want to search the system for any files called 'sakurauchi.config'
@@ -88,7 +88,7 @@ public class Main {
 		.forEach(shardFuture -> shardFuture
 				.thenAccept(Main::onShardLogin)
 				.exceptionally(ExceptionLogger.get())
-				);
+		);
 	}
 	
 	private static void onShardLogin(DiscordApi discord) {
@@ -99,10 +99,15 @@ public class Main {
 		StabilizationCore sCore = new StabilizationCore();
 		discord.addReconnectListener(sCore);
 		discord.addLostConnectionListener(sCore);
+		//sCore.sendTestEmail();
 		
 		// Start the Command Listener
 		CommandListener cListener = new CommandListener(theConfig, discord);
 		discord.addMessageCreateListener(cListener);
 		System.out.println("[SHARD " + discord.getCurrentShard() + "] Connected to Discord.");
+	}
+	
+	public static ConfigFile getConfig() {
+		return theConfig;
 	}
 }
